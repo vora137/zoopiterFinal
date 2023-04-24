@@ -4,9 +4,8 @@ import com.project.zoopiter.domain.BBSH.svc.BBSHSVC;
 import com.project.zoopiter.domain.BBSHReply.svc.BBSHReplySVC;
 import com.project.zoopiter.domain.common.file.svc.UploadFileSVC;
 import com.project.zoopiter.domain.common.pagingView.FindCriteriaView;
-import com.project.zoopiter.domain.entity.BBSH;
-import com.project.zoopiter.domain.entity.BBSHReply;
-import com.project.zoopiter.domain.entity.UploadFile;
+import com.project.zoopiter.domain.entity.*;
+import com.project.zoopiter.domain.member.svc.MemberSVC;
 import com.project.zoopiter.web.common.AttachFileType;
 import com.project.zoopiter.web.common.LoginMember;
 import com.project.zoopiter.web.form.BBSH.BbshDetailForm;
@@ -27,9 +26,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -40,6 +37,8 @@ public class NoticeController {
   private final BBSHSVC BBSHSVC;
   private final UploadFileSVC uploadFileSVC;
   private final BBSHReplySVC bbshReplySVC;
+
+  private final MemberSVC memberSVC;
 
   @Autowired
   @Qualifier("fc10View") //동일한 타입의 객체가 여러개있을때 빈이름을 명시적으로 지정해서 주입받을때
@@ -298,7 +297,7 @@ public class NoticeController {
 //      return cate;
 //    }
 
-  //구인글 목록 페이징
+  //목록 페이징
   @GetMapping({"", "/{reqPage}", "/{reqPage}//"})
   public String listPaging(
       @PathVariable(required = false) Optional<Integer> reqPage,
@@ -327,6 +326,32 @@ public class NoticeController {
 //      listForm.setBhHit(bbsh.getBhHit());
       partOfList.add(listForm);
     }
+
+    //회원프로필 조회
+    // 게시글 회원닉네임들 list에 저장
+    List<String> userNickList = new ArrayList<>();
+    for(BBSH bbsh : bbshListsPaging){
+      userNickList.add(bbsh.getUserNick());
+    }
+
+    Map<String, Long> profileMap = new LinkedHashMap<>();
+    for(String userNick : userNickList){
+      // 게시글 닉네임으로 찾은 회원정보
+      Optional<Member> byUserNick = memberSVC.findByUserNick(userNick);
+      if(byUserNick.isPresent()){
+        // 찾은 회원정보에서 프로필 id(userPhoto)값 가져오기
+        Long userPhoto = byUserNick.get().getUserPhoto();
+
+        // userPhoto 값으로 프로필 사진 찾기
+        List<UploadFile> profiles = uploadFileSVC.findFilesByCodeWithRid(AttachFileType.F0104, userPhoto);
+        log.info("profiles={}",profiles);
+
+        if(!profiles.isEmpty()){
+          profileMap.put(userNick,profiles.get(0).getUploadfileId());
+        }
+      }
+    }
+    model.addAttribute("profileMap", profileMap);
     log.info("partOfList={}", partOfList);
     model.addAttribute("bbshLists", partOfList);
     model.addAttribute("fc", fc);

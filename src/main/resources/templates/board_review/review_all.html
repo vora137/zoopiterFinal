@@ -337,11 +337,13 @@
             <div class="info">
               <div class="pro">
                 <div class="img">
-                  <!--  기본프로필 이미지 -->
-                  <i class="fa-solid fa-circle-user" style="color: #d1d1d1;"></i>
+                  <!-- 프로필 있는 경우  -->
+                  <img th:if="${#maps.containsKey(profileMap, Bbsc.userNick)}" th:src="@{|/attach/view/${profileMap[Bbsc.userNick]}|}">
+                  <!-- 기본이미지 -->
+                  <img th:if="${not #maps.containsKey(profileMap, Bbsc.userNick)}"th:src="@{'/img/img_profile1.png'}">
                 </div>
                 <div class="name">
-                  <div>작성자명</div>
+                  <div th:text="${BBSH.userNick}">작성자명</div>
                   <div id="clock" th:text="${BBSH.bhUdate}">
 
                   </div>
