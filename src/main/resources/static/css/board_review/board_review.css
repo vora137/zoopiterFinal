@@ -347,6 +347,7 @@ p {
   border-radius: 10px;
   border: 2px solid var(--color-main-background);
   background-color: var(--color-main-background);
+  flex: 3;
 }
 
 .main-nick .post .preview .img i {
@@ -358,6 +359,7 @@ p {
   flex-direction: column;
   text-align: center;
   margin-left: 10px;
+  flex: 7;
 }
 .main-nick .post .preview .review .hos {
   display: flex;

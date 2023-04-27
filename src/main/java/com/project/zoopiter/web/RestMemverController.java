@@ -108,7 +108,7 @@ public class RestMemverController {
         str.append("</html>");
 
         //이메일 인증 주석처리
-//        mailService.sendMail(email,"인증번호",str.toString());
+        mailService.sendMail(email,"인증번호",str.toString());
 
         HttpSession session = httpServletRequest.getSession();
         session.setAttribute("checkNum", String.valueOf(checkNum));
@@ -193,7 +193,7 @@ public class RestMemverController {
             str.append("</html>");
 
             //비밀번호 이메일 보내기 주석처리
-//            mailService.sendMail(email,"비밀번호",str.toString());
+            mailService.sendMail(email,"비밀번호",str.toString());
             log.info("비밀번호={}",res);
         };
     }

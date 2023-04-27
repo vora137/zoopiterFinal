@@ -25,6 +25,8 @@ public class AppConfig implements WebMvcConfigurer {
             "/img/**",
             "/api/**",
             "/mypage",
+            "/bbsc/list",
+            "/BBSH",
             "/findBymap/**"
         );  //인터셉터에서 제외되는 url패턴
   }
